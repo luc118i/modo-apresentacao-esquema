@@ -1,0 +1,282 @@
+[
+  {
+    "id": 1,
+    "nomeLinha": "FORTALEZA (CE) - RECIFE(PE)",
+    "codLinha": null,
+    "horario": "18:45",
+    "sentido": "Ida"
+  },
+  {
+    "id": 29,
+    "nomeLinha": "MACEIO (AL) - SAO PAULO (SP)",
+    "codLinha": null,
+    "horario": "10:00",
+    "sentido": "Ida"
+  },
+  {
+    "id": 32,
+    "nomeLinha": "BARREIRAS X GOIÂNIA",
+    "codLinha": "BAGO0053051",
+    "horario": "19:00",
+    "sentido": "Ida"
+  },
+  {
+    "id": 48,
+    "nomeLinha": "SALVADOR (BA) - SAO PAULO (SP)",
+    "codLinha": null,
+    "horario": "21:00",
+    "sentido": "Ida"
+  },
+  {
+    "id": 67,
+    "nomeLinha": "NATAL (RN) - SALVADOR (BA)",
+    "codLinha": null,
+    "horario": "18:20",
+    "sentido": "Ida"
+  },
+  {
+    "id": 113,
+    "nomeLinha": "NATAL (RN) - SAO PAULO (SP)",
+    "codLinha": null,
+    "horario": "01:00",
+    "sentido": "Ida"
+  },
+  {
+    "id": 115,
+    "nomeLinha": "NATAL (RN) - SAO PAULO (SP)",
+    "codLinha": null,
+    "horario": "08:00",
+    "sentido": "Ida"
+  },
+  {
+    "id": 116,
+    "nomeLinha": "NATAL (RN) - SAO PAULO (SP)",
+    "codLinha": null,
+    "horario": "10:30",
+    "sentido": "Ida"
+  },
+  {
+    "id": 117,
+    "nomeLinha": "GOIANIA(GO) - BARREIRAS(BA)",
+    "codLinha": null,
+    "horario": "17:30",
+    "sentido": "Ida"
+  },
+  {
+    "id": 118,
+    "nomeLinha": "GOIANIA(GO) - BARREIRAS(BA)",
+    "codLinha": null,
+    "horario": "21:00",
+    "sentido": "Ida"
+  },
+  {
+    "id": 119,
+    "nomeLinha": "NATAL (RN) - SAO PAULO (SP)",
+    "codLinha": null,
+    "horario": "08:00",
+    "sentido": "Volta"
+  },
+  {
+    "id": 120,
+    "nomeLinha": "NATAL (RN) - SAO PAULO (SP)",
+    "codLinha": null,
+    "horario": "17:00",
+    "sentido": "Volta"
+  },
+  {
+    "id": 121,
+    "nomeLinha": "RECIFE (PE) - SAO PAULO (SP)",
+    "codLinha": null,
+    "horario": "06:30",
+    "sentido": "Ida"
+  },
+  {
+    "id": 122,
+    "nomeLinha": "RECIFE (PE) - SAO PAULO (SP)",
+    "codLinha": null,
+    "horario": "20:00",
+    "sentido": "Volta"
+  },
+  {
+    "id": 123,
+    "nomeLinha": "SAO PAULO (SP) - BELO HORIZONTE (MG)",
+    "codLinha": null,
+    "horario": "22:00",
+    "sentido": "Ida"
+  },
+  {
+    "id": 124,
+    "nomeLinha": "SAO PAULO (SP) - BELO HORIZONTE (MG)",
+    "codLinha": null,
+    "horario": "22:00",
+    "sentido": "Volta"
+  },
+  {
+    "id": 125,
+    "nomeLinha": "NATAL (RN) - SAO PAULO (SP)",
+    "codLinha": null,
+    "horario": "14:00",
+    "sentido": "Volta"
+  },
+  {
+    "id": 126,
+    "nomeLinha": "GOIANIA X NATAL VIA BARREIRAS",
+    "codLinha": "GORN0053034",
+    "horario": "20:23",
+    "sentido": "Ida"
+  },
+  {
+    "id": 127,
+    "nomeLinha": "FORTALEZA X RECIFE",
+    "codLinha": "CEPE0053050",
+    "horario": "19:30",
+    "sentido": "Volta"
+  },
+  {
+    "id": 128,
+    "nomeLinha": "FORTALEZA X RECIFE",
+    "codLinha": "CEPE0053050",
+    "horario": "19:30",
+    "sentido": "Ida"
+  },
+  {
+    "id": 129,
+    "nomeLinha": "FORTALEZA X RECIFE",
+    "codLinha": "CEPE0053050",
+    "horario": "21:00",
+    "sentido": "Ida"
+  },
+  {
+    "id": 130,
+    "nomeLinha": "FORTALEZA X RECIFE",
+    "codLinha": "CEPE0053050",
+    "horario": "21:00",
+    "sentido": "Volta"
+  },
+  {
+    "id": 131,
+    "nomeLinha": "GOIANIA X NATAL VIA BARREIRAS",
+    "codLinha": "GORN0053034",
+    "horario": "15:30",
+    "sentido": "Ida"
+  },
+  {
+    "id": 132,
+    "nomeLinha": "GOIANIA X NATAL VIA BARREIRAS",
+    "codLinha": "GORN0053034",
+    "horario": "18:39",
+    "sentido": "Volta"
+  },
+  {
+    "id": 133,
+    "nomeLinha": "SALVADOR X RECIFE",
+    "codLinha": "BAPE0053009",
+    "horario": "18:45",
+    "sentido": "Ida"
+  },
+  {
+    "id": 134,
+    "nomeLinha": "SALVADOR X RECIFE",
+    "codLinha": "BAPE0053009",
+    "horario": "18:45",
+    "sentido": "Volta"
+  },
+  {
+    "id": 135,
+    "nomeLinha": "SALVADOR X RECIFE",
+    "codLinha": "BAPE0053009",
+    "horario": "21:00",
+    "sentido": "Ida"
+  },
+  {
+    "id": 136,
+    "nomeLinha": "SALVADOR X RECIFE",
+    "codLinha": "BAPE0053009",
+    "horario": "21:00",
+    "sentido": "Volta"
+  },
+  {
+    "id": 137,
+    "nomeLinha": "NATAL X SALVADOR",
+    "codLinha": "RNBA0053054",
+    "horario": "09:45",
+    "sentido": "Volta"
+  },
+  {
+    "id": 138,
+    "nomeLinha": "BARREIRAS X GOIÂNIA",
+    "codLinha": "BAGO0053051",
+    "horario": "21:00",
+    "sentido": "Ida"
+  },
+  {
+    "id": 139,
+    "nomeLinha": "BARREIRAS X GOIÂNIA",
+    "codLinha": "BAGO0053051",
+    "horario": "17:30",
+    "sentido": "Volta"
+  },
+  {
+    "id": 140,
+    "nomeLinha": "BARREIRAS X GOIÂNIA",
+    "codLinha": "BAGO0053051",
+    "horario": "19:00",
+    "sentido": "Volta"
+  },
+  {
+    "id": 141,
+    "nomeLinha": "BARREIRAS X GOIÂNIA",
+    "codLinha": "BAGO0053051",
+    "horario": "17:30",
+    "sentido": "Ida"
+  },
+  {
+    "id": 143,
+    "nomeLinha": "MACEIO X SÃO PAULO via UBERLANDIA",
+    "codLinha": "ALSP0053032",
+    "horario": "08:00",
+    "sentido": "Ida"
+  },
+  {
+    "id": 144,
+    "nomeLinha": "GOIANIA (GO) X NATAL (RN)",
+    "codLinha": null,
+    "horario": "04:00",
+    "sentido": "Volta"
+  },
+  {
+    "id": 145,
+    "nomeLinha": "SAO PAULO (SP) - MACEIO (AL)",
+    "codLinha": "ALSP0053032",
+    "horario": "12:00",
+    "sentido": "Volta"
+  },
+  {
+    "id": 146,
+    "nomeLinha": "SAO PAULO X BELO HORIZONTE",
+    "codLinha": "SPMG0053063",
+    "horario": "20:00",
+    "sentido": "Ida"
+  },
+  {
+    "id": 147,
+    "nomeLinha": "SAO PAULO X BELO HORIZONTE",
+    "codLinha": "SPMG0053063",
+    "horario": "20:00",
+    "sentido": "Volta"
+  },
+  {
+    "id": 148,
+    "nomeLinha": "BELO HORIZONTE X TAGUATINGA",
+    "codLinha": "MGDF0115001",
+    "horario": "19:30",
+    "sentido": "Ida"
+  },
+  {
+    "id": 149,
+    "nomeLinha": "BELO HORIZONTE X TAGUATINGA",
+    "codLinha": "MGDF0115001",
+    "horario": "19:30",
+    "sentido": "Volta"
+  }
+]

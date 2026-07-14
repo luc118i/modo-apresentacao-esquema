@@ -1,0 +1,72 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap");
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------
+   Design tokens — "Roteiro Operacional" Catedral.
+   Poster quente: creme + laranja em gradiente, tipografia Archivo.
+   --------------------------------------------------------------- */
+@theme {
+  --color-page: #ece6e0;
+  --color-card: #f6f1ec;
+  --color-surface: #ffffff;
+  --color-border: #eee6dd;
+  --color-rail: #e7ddd3;
+
+  --color-ink: #1a1410;
+  --color-muted: #9a8e82;
+  --color-subtle: #b7a99b;
+
+  --color-primary: #f55807;
+  --color-primary-light: #ff8a1e;
+  --color-node-border: #f2b98c;
+  --color-node-ink: #c2410c;
+  --color-accent-soft: #fff1e8;
+
+  /* Categorias de parada */
+  --color-embarque: #f55807;
+  --color-alimentacao: #ca8a04;
+  --color-troca: #2563eb;
+  --color-abastece: #16a34a;
+
+  /* Aliases semânticos usados pela UI de busca/lista (paleta quente) */
+  --color-bg: #ece6e0;
+  --color-surface-hover: #efe8e1;
+  --color-text: #1a1410;
+  --color-text-muted: #9a8e82;
+  --color-text-subtle: #b7a99b;
+  --color-primary-hover: #dc4d06;
+  --color-primary-soft: #fff1e8;
+  --color-ida: #2563eb;
+  --color-volta: #7c3aed;
+
+  --font-sans: "Archivo", system-ui, -apple-system, sans-serif;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  background-color: var(--color-page);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Barra de carregamento global (indeterminada) */
+@keyframes loading-indeterminate {
+  0% {
+    left: -35%;
+    right: 100%;
+  }
+  60% {
+    left: 100%;
+    right: -35%;
+  }
+  100% {
+    left: 100%;
+    right: -35%;
+  }
+}
