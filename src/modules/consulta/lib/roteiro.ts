@@ -157,19 +157,24 @@ export function buildRoteiro(esquema: Esquema, pontos: Ponto[]): RoteiroViewMode
 
   const stops: RoteiroStop[] = raw.map(({ p, i, city, place, uf, tipoLocal }) => {
     const tags = inferTags(p);
-    // Permanência: ponto de apoio = 30 min fixo. Rodoviária segue o Gestão de
-    // Esquemas: tempo_local (ajuste manual salvo) tem prioridade; sem ele, usa
-    // a aba TEMPO_PERMANENCIA + bônus por tag (Alimentação/Troca/Abastecimento)
-    // quando há horário comercial — mesma regra de EsqScripts.html (_getStopTime).
+    // Permanência: mesma fórmula do Gestão de Esquemas (_getStopTime em
+    // EsqScripts.html), independente de Rodoviária/Ponto de apoio — o Gestão
+    // não diferencia por tipo de local, só por TEMPO_PERMANENCIA/comercial/tags.
+    // Prioridade: tempo_local (ajuste manual salvo) > TEMPO_PERMANENCIA + bônus
+    // por tag quando há horário comercial > sem registro: 30+bônus (comercial)
+    // ou só o bônus (sem comercial), com 30 de piso quando não há bônus nenhum.
     const bonus = tags.reduce((sum, t) => sum + (TAG_BONUS_MIN[t] ?? 0), 0);
+    const temComercial = !!p.horarioComercial;
     const permMin =
-      tipoLocal === "Ponto de apoio"
-        ? 30
-        : p.tempoLocal != null
-          ? p.tempoLocal
-          : p.tempoPermanencia != null
-            ? p.tempoPermanencia + (p.horarioComercial ? bonus : 0)
-            : 5;
+      p.tempoLocal != null
+        ? p.tempoLocal
+        : p.tempoPermanencia != null
+          ? p.tempoPermanencia + (temComercial ? bonus : 0)
+          : temComercial
+            ? 30 + bonus
+            : bonus > 0
+              ? bonus
+              : 30;
     return {
       ord: p.ordem,
       cidade: uf ? `${city} - ${uf}` : city,
