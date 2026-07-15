@@ -1,4 +1,5 @@
 import { Clock, Timer } from "lucide-react";
+import { LONG_PRESS_DURATION_MS, useLongPress } from "@/shared/hooks/useLongPress";
 import { TAGS, type RoteiroStop, type RoteiroViewModel, type TipoLocal } from "../../lib/roteiro";
 
 const TIPO_STYLE: Record<TipoLocal, { bg: string; color: string }> = {
@@ -6,9 +7,14 @@ const TIPO_STYLE: Record<TipoLocal, { bg: string; color: string }> = {
   "Ponto de apoio": { bg: "#F1EAE1", color: "#8A7B6C" },
 };
 
-export function RoteiroTimeline({ vm }: { vm: RoteiroViewModel }) {
+type Props = { vm: RoteiroViewModel; onAjustarPonto: (stop: RoteiroStop) => void };
+
+export function RoteiroTimeline({ vm, onAjustarPonto }: Props) {
   return (
     <div style={{ padding: "18px 18px 12px" }}>
+      <style>{`
+        @keyframes ajustar-fill { from { width: 0%; } to { width: 100%; } }
+      `}</style>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
         <div style={{ fontSize: 16, fontWeight: 800, color: "#1A1410", letterSpacing: -0.2 }}>
           Itinerário
@@ -20,7 +26,7 @@ export function RoteiroTimeline({ vm }: { vm: RoteiroViewModel }) {
 
       <div style={{ marginTop: 14 }}>
         {vm.stops.map((stop, i) => (
-          <StopRow key={`${stop.ord}-${i}`} stop={stop} showTop={i > 0} />
+          <StopRow key={`${stop.ord}-${i}`} stop={stop} showTop={i > 0} onAjustar={() => onAjustarPonto(stop)} />
         ))}
         <DestinationRow city={vm.destino} uf={vm.ufDestino} />
       </div>
@@ -28,8 +34,17 @@ export function RoteiroTimeline({ vm }: { vm: RoteiroViewModel }) {
   );
 }
 
-function StopRow({ stop, showTop }: { stop: RoteiroStop; showTop: boolean }) {
+function StopRow({
+  stop,
+  showTop,
+  onAjustar,
+}: {
+  stop: RoteiroStop;
+  showTop: boolean;
+  onAjustar: () => void;
+}) {
   const tipo = TIPO_STYLE[stop.tipoLocal];
+  const { handlers, pressing } = useLongPress(onAjustar);
   return (
     <div style={{ display: "flex", gap: 14 }}>
       <div style={{ position: "relative", width: 40, flexShrink: 0, display: "flex", justifyContent: "center" }}>
@@ -59,7 +74,34 @@ function StopRow({ stop, showTop }: { stop: RoteiroStop; showTop: boolean }) {
       </div>
 
       <div style={{ flex: 1, paddingBottom: 16 }}>
-        <div style={{ background: "#fff", border: "1px solid #EEE6DD", borderRadius: 16, padding: "13px 14px" }}>
+        <div
+          {...handlers}
+          style={{
+            position: "relative",
+            background: "#fff",
+            border: `1px solid ${pressing ? "#F2B98C" : "#EEE6DD"}`,
+            borderRadius: 16,
+            padding: "13px 14px",
+            overflow: "hidden",
+            touchAction: "pan-y",
+            WebkitUserSelect: "none",
+            userSelect: "none",
+            transform: pressing ? "scale(0.98)" : "scale(1)",
+            transition: "transform 150ms ease, border-color 150ms ease",
+          }}
+        >
+          {pressing && (
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                height: 3,
+                background: "#F55807",
+                animation: `ajustar-fill ${LONG_PRESS_DURATION_MS}ms linear forwards`,
+              }}
+            />
+          )}
           {/* Cidade - UF */}
           <div
             style={{

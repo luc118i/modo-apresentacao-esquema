@@ -1,11 +1,13 @@
+import { useState } from "react";
 import type { Esquema } from "@/shared/models/esquema";
 import type { Ponto } from "@/shared/models/ponto";
 import { config } from "@/config";
-import { buildRoteiro, LEGEND } from "../../lib/roteiro";
+import { buildRoteiro, LEGEND, type RoteiroStop } from "../../lib/roteiro";
 import { RoteiroHeader } from "./RoteiroHeader";
 import { RoteiroTimeline } from "./RoteiroTimeline";
 import { ShareButton } from "./ShareButton";
 import { AjusteButton } from "./AjusteButton";
+import { AjustePontoModal } from "./AjustePontoModal";
 
 type Props = { esquema: Esquema; pontos: Ponto[]; lastUpdated: string | null };
 
@@ -14,19 +16,22 @@ export function RoteiroCard({ esquema, pontos, lastUpdated }: Props) {
   const dataAtualizacao = lastUpdated
     ? new Date(lastUpdated).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" })
     : null;
+  const [pontoAjuste, setPontoAjuste] = useState<RoteiroStop | null>(null);
+  const tituloEsquema = `${vm.sentido.toUpperCase()} ${vm.origem} → ${vm.destino} · Saída ${vm.saida}`;
 
   return (
-    <div
-      style={{
-        width: 402,
-        maxWidth: "100%",
-        margin: "0 auto",
-        background: "#F6F1EC",
-        borderRadius: 30,
-        overflow: "hidden",
-        boxShadow: "0 30px 70px rgba(0,0,0,.16), 0 0 0 1px rgba(0,0,0,.04)",
-      }}
-    >
+    <>
+      <div
+        style={{
+          width: 402,
+          maxWidth: "100%",
+          margin: "0 auto",
+          background: "#F6F1EC",
+          borderRadius: 30,
+          overflow: "hidden",
+          boxShadow: "0 30px 70px rgba(0,0,0,.16), 0 0 0 1px rgba(0,0,0,.04)",
+        }}
+      >
       <RoteiroHeader vm={vm} />
 
       {/* Stats */}
@@ -46,7 +51,7 @@ export function RoteiroCard({ esquema, pontos, lastUpdated }: Props) {
         </div>
       </div>
 
-      <RoteiroTimeline vm={vm} />
+      <RoteiroTimeline vm={vm} onAjustarPonto={setPontoAjuste} />
 
       {/* Legenda */}
       <div style={{ padding: "4px 18px 10px" }}>
@@ -66,9 +71,7 @@ export function RoteiroCard({ esquema, pontos, lastUpdated }: Props) {
           title={`${vm.origem} → ${vm.destino} · Roteiros Catedral`}
           text={`Roteiro Operacional ${vm.sentido.toUpperCase()} · ${vm.origem} → ${vm.destino} · Saída ${vm.saida}`}
         />
-        <AjusteButton
-          titulo={`${vm.sentido.toUpperCase()} ${vm.origem} → ${vm.destino} · Saída ${vm.saida}`}
-        />
+        <AjusteButton titulo={tituloEsquema} />
       </div>
 
       {/* Rodapé */}
@@ -106,7 +109,16 @@ export function RoteiroCard({ esquema, pontos, lastUpdated }: Props) {
           </a>
         </div>
       </div>
-    </div>
+      </div>
+
+      {pontoAjuste && (
+        <AjustePontoModal
+          stop={pontoAjuste}
+          tituloEsquema={tituloEsquema}
+          onClose={() => setPontoAjuste(null)}
+        />
+      )}
+    </>
   );
 }
 

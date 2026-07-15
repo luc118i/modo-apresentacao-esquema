@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { MessageSquareWarning, Send } from "lucide-react";
-
-/** Número que recebe as solicitações de ajuste via WhatsApp (formato internacional, só dígitos). */
-const WHATSAPP_NUMERO = "556199089050";
+import { abrirWhatsappAjuste } from "../../lib/ajuste";
 
 type Props = { titulo: string };
 
@@ -13,7 +11,7 @@ export function AjusteButton({ titulo }: Props) {
 
   function handleEnviar() {
     const texto = `Solicitação de ajuste — ${titulo}\n\n${mensagem.trim()}\n\n${window.location.href}`;
-    window.open(`https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(texto)}`, "_blank", "noreferrer");
+    abrirWhatsappAjuste(texto);
     setAberto(false);
     setMensagem("");
   }

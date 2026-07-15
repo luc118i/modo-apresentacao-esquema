@@ -1,15 +1,21 @@
 import type { ReactNode } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, Route } from "lucide-react";
 import { useHeaderState } from "@/app/HeaderSlot";
 import { GlobalLoadingBar } from "@/shared/ui/GlobalLoadingBar";
 import { UpdateBanner } from "@/modules/consulta/components/UpdateBanner";
+import { useEdgeGestures } from "@/shared/hooks/useEdgeGestures";
 import { cn } from "@/shared/lib/cn";
 
 export function PublicLayout({ children }: { children: ReactNode }) {
   const { back, title, transparent } = useHeaderState();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const irParaHome = () => navigate("/");
+  const gestures = useEdgeGestures(back, irParaHome);
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="min-h-screen bg-bg" {...gestures}>
       <GlobalLoadingBar />
       <header
         className={cn(
@@ -28,14 +34,21 @@ export function PublicLayout({ children }: { children: ReactNode }) {
             </button>
           )}
 
-          <span className="grid size-7 shrink-0 place-items-center rounded-md bg-primary text-white">
-            <Route className="size-4" />
-          </span>
-          <span
-            className={`text-sm font-semibold tracking-tight ${title ? "hidden sm:inline" : ""}`}
+          <button
+            onClick={irParaHome}
+            disabled={location.pathname === "/"}
+            aria-label="Início"
+            className="flex shrink-0 items-center gap-2.5 disabled:cursor-default"
           >
-            Roteiros Catedral
-          </span>
+            <span className="grid size-7 shrink-0 place-items-center rounded-md bg-primary text-white">
+              <Route className="size-4" />
+            </span>
+            <span
+              className={`text-sm font-semibold tracking-tight ${title ? "hidden sm:inline" : ""}`}
+            >
+              Roteiros Catedral
+            </span>
+          </button>
 
           {title && (
             <>
