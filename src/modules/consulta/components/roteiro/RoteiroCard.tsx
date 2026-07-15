@@ -5,6 +5,7 @@ import { buildRoteiro, LEGEND } from "../../lib/roteiro";
 import { RoteiroHeader } from "./RoteiroHeader";
 import { RoteiroTimeline } from "./RoteiroTimeline";
 import { ShareButton } from "./ShareButton";
+import { AjusteButton } from "./AjusteButton";
 
 type Props = { esquema: Esquema; pontos: Ponto[]; lastUpdated: string | null };
 
@@ -59,11 +60,14 @@ export function RoteiroCard({ esquema, pontos, lastUpdated }: Props) {
         </div>
       </div>
 
-      {/* Compartilhar */}
-      <div style={{ padding: "4px 18px 6px" }}>
+      {/* Compartilhar + Solicitar ajuste */}
+      <div style={{ padding: "4px 18px 6px", display: "flex", flexDirection: "column", gap: 8 }}>
         <ShareButton
           title={`${vm.origem} → ${vm.destino} · Roteiros Catedral`}
           text={`Roteiro Operacional ${vm.sentido.toUpperCase()} · ${vm.origem} → ${vm.destino} · Saída ${vm.saida}`}
+        />
+        <AjusteButton
+          titulo={`${vm.sentido.toUpperCase()} ${vm.origem} → ${vm.destino} · Saída ${vm.saida}`}
         />
       </div>
 
@@ -79,14 +83,19 @@ export function RoteiroCard({ esquema, pontos, lastUpdated }: Props) {
             marginTop: 10,
             paddingTop: 10,
             borderTop: "1px solid #EEE6DD",
-            fontSize: 10,
-            fontWeight: 500,
-            color: "#C7BBAD",
-            lineHeight: 1.6,
+            fontSize: 11.5,
+            fontWeight: 600,
+            color: "#9A8E82",
+            lineHeight: 1.7,
           }}
         >
-          {dataAtualizacao && <>Planilha atualizada em {dataAtualizacao}<br /></>}
-          Feito por{" "}
+          {dataAtualizacao && (
+            <>
+              Planilha atualizada em {dataAtualizacao}
+              <br />
+            </>
+          )}
+          <span style={{ fontWeight: 500 }}>Feito por</span>{" "}
           <a
             href={config.credit.url}
             target="_blank"

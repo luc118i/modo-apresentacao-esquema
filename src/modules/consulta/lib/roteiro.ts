@@ -18,6 +18,13 @@ export const LEGEND = [
   { label: "Abastecimento", dot: "#16A34A" },
 ];
 
+/**
+ * Minutos extras quando o ponto acumula operação além de Embarque/Desemb.,
+ * somados ao tempo base (aba TEMPO_PERMANENCIA) só quando há horário comercial —
+ * mesma regra do Gestão de Esquemas (EsqScripts.html: TIPO_PARADA_BONUS_MIN).
+ */
+const TAG_BONUS_MIN: Partial<Record<TagKey, number>> = { alimentacao: 30, troca: 15, abastece: 15 };
+
 const UFS = new Set([
   "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB",
   "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO",
@@ -149,15 +156,26 @@ export function buildRoteiro(esquema: Esquema, pontos: Ponto[]): RoteiroViewMode
   });
 
   const stops: RoteiroStop[] = raw.map(({ p, i, city, place, uf, tipoLocal }) => {
-    // Permanência: ponto de apoio = 30 min fixo; rodoviária segue a aba
-    // TEMPO_PERMANENCIA e, quando não há registro, cai em 5 min de fallback.
-    const permMin = tipoLocal === "Ponto de apoio" ? 30 : (p.tempoPermanencia ?? 5);
+    const tags = inferTags(p);
+    // Permanência: ponto de apoio = 30 min fixo. Rodoviária segue o Gestão de
+    // Esquemas: tempo_local (ajuste manual salvo) tem prioridade; sem ele, usa
+    // a aba TEMPO_PERMANENCIA + bônus por tag (Alimentação/Troca/Abastecimento)
+    // quando há horário comercial — mesma regra de EsqScripts.html (_getStopTime).
+    const bonus = tags.reduce((sum, t) => sum + (TAG_BONUS_MIN[t] ?? 0), 0);
+    const permMin =
+      tipoLocal === "Ponto de apoio"
+        ? 30
+        : p.tempoLocal != null
+          ? p.tempoLocal
+          : p.tempoPermanencia != null
+            ? p.tempoPermanencia + (p.horarioComercial ? bonus : 0)
+            : 5;
     return {
       ord: p.ordem,
       cidade: uf ? `${city} - ${uf}` : city,
       place: tipoLocal === "Ponto de apoio" ? place : "",
       tipoLocal,
-      tags: inferTags(p),
+      tags,
       horaComercial: p.horarioComercial ?? "",
       minLabel: permMin != null ? `${String(permMin).padStart(2, "0")} min` : "",
       origin: i === 0,

@@ -4,6 +4,7 @@ import { idFromSlug } from "@/shared/lib/esquemaSlug";
 import { esquemaSchema, type Esquema } from "@/shared/models/esquema";
 import { pontoSchema, type Ponto } from "@/shared/models/ponto";
 import type { Linha } from "@/shared/models/linha";
+import { queryClient } from "@/app/queryClient";
 import { apiClient } from "./apiClient";
 import esquemasData from "./mock/esquemas.json";
 import pontosData from "./mock/pontos.json";
@@ -29,6 +30,16 @@ async function fetchEsquemas(): Promise<EsquemasPayload> {
   };
 }
 
+/** Só a data de última atualização, sem re-buscar a lista inteira (mock ou API). */
+async function fetchServerLastUpdated(): Promise<string | null> {
+  if (config.useMock) {
+    await delay();
+    return metaData.lastUpdated;
+  }
+  const { data } = await apiClient.get("", { params: { action: "getMeta" } });
+  return typeof data?.lastUpdated === "string" ? data.lastUpdated : null;
+}
+
 /** Busca os pontos de um esquema (mock ou API). */
 async function fetchPontos(idEsquema: number): Promise<Ponto[]> {
   if (config.useMock) {
@@ -43,11 +54,71 @@ async function fetchPontos(idEsquema: number): Promise<Ponto[]> {
     .sort((a, b) => a.ordem - b.ordem);
 }
 
+// ── Cache persistente (localStorage) ──────────────────────────────────────
+// Evita mostrar o skeleton de novo a cada visita: a primeira renderização usa
+// o que já está salvo no navegador (instantâneo), enquanto uma checagem leve
+// (?action=getMeta) roda em segundo plano. Só refaz a busca pesada e invalida
+// as queries — atualizando a tela sozinha — quando a planilha realmente mudou.
+const LS_KEY = "esquemas_cache_v1";
+
+function readLocalCache(): EsquemasPayload | null {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    const esquemas = esquemaSchema.array().safeParse(parsed.esquemas);
+    if (!esquemas.success) return null;
+    const lastUpdated = typeof parsed.lastUpdated === "string" ? parsed.lastUpdated : null;
+    return { esquemas: esquemas.data, lastUpdated };
+  } catch {
+    return null;
+  }
+}
+
+function writeLocalCache(payload: EsquemasPayload) {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify(payload));
+  } catch {
+    // localStorage indisponível/cheio — segue sem persistir, sem quebrar o app.
+  }
+}
+
 /** Cache de sessão da lista de esquemas — deduplica as chamadas de getLinhas/getEsquemasByLinha. */
 let esquemasCache: Promise<EsquemasPayload> | null = null;
+
 function loadEsquemas(): Promise<EsquemasPayload> {
-  if (!esquemasCache) esquemasCache = fetchEsquemas();
+  if (esquemasCache) return esquemasCache;
+
+  const cached = readLocalCache();
+  if (cached) {
+    esquemasCache = Promise.resolve(cached);
+    revalidateInBackground(cached);
+    return esquemasCache;
+  }
+
+  esquemasCache = fetchEsquemas().then((payload) => {
+    writeLocalCache(payload);
+    return payload;
+  });
   return esquemasCache;
+}
+
+/** Checa (leve) se a planilha mudou desde o cache local; só refaz a busca pesada se mudou. */
+async function revalidateInBackground(cached: EsquemasPayload): Promise<void> {
+  try {
+    const serverLastUpdated = await fetchServerLastUpdated();
+    if (serverLastUpdated != null && serverLastUpdated === cached.lastUpdated) return;
+
+    const fresh = await fetchEsquemas();
+    writeLocalCache(fresh);
+    esquemasCache = Promise.resolve(fresh);
+    queryClient.invalidateQueries({ queryKey: ["linhas"] });
+    queryClient.invalidateQueries({ queryKey: ["esquemas"] });
+    queryClient.invalidateQueries({ queryKey: ["esquema"] });
+    queryClient.invalidateQueries({ queryKey: ["lastUpdated"] });
+  } catch {
+    // Sem rede/erro na checagem — mantém o cache local, tenta de novo na próxima visita.
+  }
 }
 
 /** Chave de agrupamento: COD_LINHA (real, vindo da planilha) ou o nome exato, quando não há código. */
@@ -103,7 +174,16 @@ export const EsquemaService = {
     const id = idFromSlug(slug);
     if (id == null) return null;
     const { esquemas } = await loadEsquemas();
-    return esquemas.find((e) => e.id === id) ?? null;
+    const found = esquemas.find((e) => e.id === id);
+    if (found) return found;
+
+    // Não achou no cache local — pode estar desatualizado (típico em link
+    // compartilhado abrindo num navegador com cache antigo/vazio). Antes de
+    // declarar "não encontrado", força uma busca fresca ignorando o cache.
+    const fresh = await fetchEsquemas();
+    writeLocalCache(fresh);
+    esquemasCache = Promise.resolve(fresh);
+    return fresh.esquemas.find((e) => e.id === id) ?? null;
   },
 
   async getPontos(idEsquema: number): Promise<Ponto[]> {
@@ -121,11 +201,6 @@ export const EsquemaService = {
    * polling que avisa "dados novos disponíveis", sem re-buscar tudo.
    */
   async getServerLastUpdated(): Promise<string | null> {
-    if (config.useMock) {
-      await delay();
-      return metaData.lastUpdated;
-    }
-    const { data } = await apiClient.get("", { params: { action: "getMeta" } });
-    return typeof data?.lastUpdated === "string" ? data.lastUpdated : null;
+    return fetchServerLastUpdated();
   },
 };
