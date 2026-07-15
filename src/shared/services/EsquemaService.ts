@@ -115,9 +115,40 @@ async function revalidateInBackground(cached: EsquemasPayload): Promise<void> {
     queryClient.invalidateQueries({ queryKey: ["linhas"] });
     queryClient.invalidateQueries({ queryKey: ["esquemas"] });
     queryClient.invalidateQueries({ queryKey: ["esquema"] });
+    queryClient.invalidateQueries({ queryKey: ["pontos"] });
     queryClient.invalidateQueries({ queryKey: ["lastUpdated"] });
   } catch {
     // Sem rede/erro na checagem — mantém o cache local, tenta de novo na próxima visita.
+  }
+}
+
+// ── Cache persistente dos pontos por esquema (localStorage) ───────────────
+// Mesmo princípio do cache de esquemas: guarda o roteiro já buscado, marcado
+// com o `lastUpdated` da planilha na hora da busca. Enquanto a planilha não
+// mudar, visitas seguintes ao mesmo esquema usam o cache (instantâneo) em vez
+// de esperar a API do Apps Script de novo.
+const LS_KEY_PONTOS = "pontos_cache_v1";
+
+type PontosCacheMap = Record<number, { pontos: Ponto[]; lastUpdated: string | null }>;
+
+function readPontosCache(): PontosCacheMap {
+  try {
+    const raw = localStorage.getItem(LS_KEY_PONTOS);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function writePontosCacheEntry(idEsquema: number, pontos: Ponto[], lastUpdated: string | null) {
+  try {
+    const cache = readPontosCache();
+    cache[idEsquema] = { pontos, lastUpdated };
+    localStorage.setItem(LS_KEY_PONTOS, JSON.stringify(cache));
+  } catch {
+    // localStorage indisponível/cheio — segue sem persistir, sem quebrar o app.
   }
 }
 
@@ -187,7 +218,13 @@ export const EsquemaService = {
   },
 
   async getPontos(idEsquema: number): Promise<Ponto[]> {
-    return fetchPontos(idEsquema);
+    const { lastUpdated } = await loadEsquemas();
+    const cached = readPontosCache()[idEsquema];
+    if (cached && cached.lastUpdated === lastUpdated) return cached.pontos;
+
+    const pontos = await fetchPontos(idEsquema);
+    writePontosCacheEntry(idEsquema, pontos, lastUpdated);
+    return pontos;
   },
 
   /** Data da última modificação da planilha (mesma para todos os esquemas). */
