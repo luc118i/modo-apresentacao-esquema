@@ -1,8 +1,5 @@
 import { z } from "zod";
 
-export const tipoTrechoSchema = z.enum(["Mun", "BR", "Urb", "Est"]);
-export type TipoTrecho = z.infer<typeof tipoTrechoSchema>;
-
 export const tipoPontoSchema = z.object({
   label: z.string(),
   codigo: z.number().nullable(),
@@ -17,7 +14,8 @@ export const pontoSchema = z.object({
   tipo: tipoPontoSchema,
   horarioComercial: z.string().nullable(),
   tempoLocal: z.number().nullable(),
-  tipoTrecho: tipoTrechoSchema.nullable(),
+  /** Tipo de trecho (BR/Urb/Est/Mun) ou "Pers:NN" (trecho pessoal/percentual). Não usado em lógica de UI. */
+  tipoTrecho: z.string().nullable(),
   /** Tipos de parada vindos da planilha (colunas booleanas). Vazio = usar heurística. */
   tiposParada: z.array(z.string()).nullable().default(null),
   /** Da planilha LOCAIS (coluna Rodoviária S/N). null = usar heurística por nome. */
