@@ -8,6 +8,7 @@ import { RoteiroTimeline } from "./RoteiroTimeline";
 import { ShareButton } from "./ShareButton";
 import { AjusteButton } from "./AjusteButton";
 import { AjustePontoModal } from "./AjustePontoModal";
+import { AjudaGestoBanner } from "./AjudaGestoBanner";
 
 type Props = { esquema: Esquema; pontos: Ponto[]; lastUpdated: string | null };
 
@@ -17,7 +18,15 @@ export function RoteiroCard({ esquema, pontos, lastUpdated }: Props) {
     ? new Date(lastUpdated).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" })
     : null;
   const [pontoAjuste, setPontoAjuste] = useState<RoteiroStop | null>(null);
+  // Sem persistência: o banner volta a aparecer a cada esquema novo (a página
+  // remonta por causa da `key` em RoteiroPage), só some dentro desta visita.
+  const [ajudaVisivel, setAjudaVisivel] = useState(true);
   const tituloEsquema = `${vm.sentido.toUpperCase()} ${vm.origem} → ${vm.destino} · Saída ${vm.saida}`;
+
+  function handleAjustarPonto(stop: RoteiroStop) {
+    setAjudaVisivel(false);
+    setPontoAjuste(stop);
+  }
 
   return (
     <>
@@ -51,7 +60,9 @@ export function RoteiroCard({ esquema, pontos, lastUpdated }: Props) {
         </div>
       </div>
 
-      <RoteiroTimeline vm={vm} onAjustarPonto={setPontoAjuste} />
+      <AjudaGestoBanner visivel={ajudaVisivel} onFechar={() => setAjudaVisivel(false)} />
+
+      <RoteiroTimeline vm={vm} onAjustarPonto={handleAjustarPonto} />
 
       {/* Legenda */}
       <div style={{ padding: "4px 18px 10px" }}>

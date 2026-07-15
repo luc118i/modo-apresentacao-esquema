@@ -11,6 +11,15 @@ const MOTIVOS = [
   "Permanência errada",
 ];
 
+/** Só faz sentido perguntar qualidade em pontos de apoio (restaurantes, postos etc.), não em rodoviárias. */
+const MOTIVOS_QUALIDADE = [
+  "Lugar pequeno",
+  "Comida ruim",
+  "Mau atendimento",
+  "Estrutura ruim",
+  "Demora muita",
+];
+
 type Props = {
   stop: RoteiroStop;
   tituloEsquema: string;
@@ -19,16 +28,20 @@ type Props = {
 
 /** Bottom sheet aberto por toque-e-segure numa parada — pede o motivo do ajuste e manda pro WhatsApp. */
 export function AjustePontoModal({ stop, tituloEsquema, onClose }: Props) {
-  const [motivo, setMotivo] = useState<string | null>(null);
+  const [motivos, setMotivos] = useState<string[]>([]);
   const [mensagem, setMensagem] = useState("");
 
-  const podeEnviar = motivo != null || mensagem.trim().length > 0;
+  const podeEnviar = motivos.length > 0 || mensagem.trim().length > 0;
+
+  function toggleMotivo(m: string) {
+    setMotivos((prev) => (prev.includes(m) ? prev.filter((x) => x !== m) : [...prev, m]));
+  }
 
   function handleEnviar() {
     const linhas = [
       `Solicitação de ajuste — ${tituloEsquema}`,
       `Parada ${stop.ord}: ${stop.cidade}${stop.place ? ` (${stop.place})` : ""}`,
-      motivo ? `Motivo: ${motivo}` : null,
+      motivos.length ? `Motivo: ${motivos.join(", ")}` : null,
       mensagem.trim() || null,
       window.location.href,
     ].filter((l): l is string => !!l);
@@ -96,28 +109,25 @@ export function AjustePontoModal({ stop, tituloEsquema, onClose }: Props) {
           </button>
         </div>
 
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginTop: 14 }}>
-          {MOTIVOS.map((m) => {
-            const ativo = motivo === m;
-            return (
-              <button
-                key={m}
-                onClick={() => setMotivo(ativo ? null : m)}
-                style={{
-                  padding: "8px 12px",
-                  borderRadius: 999,
-                  border: `1px solid ${ativo ? "#F55807" : "#EEE6DD"}`,
-                  background: ativo ? "#FFF1E8" : "#fff",
-                  color: ativo ? "#C2410C" : "#4A4038",
-                  fontSize: 12.5,
-                  fontWeight: 600,
-                }}
-              >
-                {m}
-              </button>
-            );
-          })}
-        </div>
+        <MotivoChips options={MOTIVOS} selecionados={motivos} onToggle={toggleMotivo} marginTop={14} />
+
+        {stop.tipoLocal === "Ponto de apoio" && (
+          <>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                color: "#B7A99B",
+                textTransform: "uppercase",
+                letterSpacing: 0.4,
+                marginTop: 14,
+              }}
+            >
+              Qualidade do local
+            </div>
+            <MotivoChips options={MOTIVOS_QUALIDADE} selecionados={motivos} onToggle={toggleMotivo} />
+          </>
+        )}
 
         <textarea
           value={mensagem}
@@ -162,6 +172,43 @@ export function AjustePontoModal({ stop, tituloEsquema, onClose }: Props) {
           Enviar via WhatsApp
         </button>
       </div>
+    </div>
+  );
+}
+
+function MotivoChips({
+  options,
+  selecionados,
+  onToggle,
+  marginTop = 8,
+}: {
+  options: string[];
+  selecionados: string[];
+  onToggle: (m: string) => void;
+  marginTop?: number;
+}) {
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginTop }}>
+      {options.map((m) => {
+        const ativo = selecionados.includes(m);
+        return (
+          <button
+            key={m}
+            onClick={() => onToggle(m)}
+            style={{
+              padding: "8px 12px",
+              borderRadius: 999,
+              border: `1px solid ${ativo ? "#F55807" : "#EEE6DD"}`,
+              background: ativo ? "#FFF1E8" : "#fff",
+              color: ativo ? "#C2410C" : "#4A4038",
+              fontSize: 12.5,
+              fontWeight: 600,
+            }}
+          >
+            {m}
+          </button>
+        );
+      })}
     </div>
   );
 }

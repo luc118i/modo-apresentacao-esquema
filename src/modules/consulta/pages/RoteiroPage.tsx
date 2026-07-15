@@ -42,6 +42,13 @@ export function RoteiroPage() {
   }
 
   return (
-    <RoteiroCard esquema={esquema.data} pontos={pontos.data} lastUpdated={lastUpdated.data ?? null} />
+    // key força remontar ao trocar de esquema — o banner de ajuda do gesto
+    // volta a aparecer em cada roteiro novo, mesmo já tendo sido fechado antes.
+    <RoteiroCard
+      key={esquema.data.id}
+      esquema={esquema.data}
+      pontos={pontos.data}
+      lastUpdated={lastUpdated.data ?? null}
+    />
   );
 }
