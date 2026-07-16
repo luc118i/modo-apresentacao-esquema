@@ -10,8 +10,20 @@ import esquemasData from "./mock/esquemas.json";
 import pontosData from "./mock/pontos.json";
 import metaData from "./mock/meta.json";
 
-const mockEsquemas: Esquema[] = esquemaSchema.array().parse(esquemasData);
 const mockPontos: Ponto[] = pontoSchema.array().parse(pontosData);
+
+/** Mock não tem pontosNomes na origem — enriquece com os nomes vindos de mockPontos (busca por local). */
+function withPontosNomes(esquemas: Esquema[]): Esquema[] {
+  const porEsquema = new Map<number, string[]>();
+  for (const p of mockPontos) {
+    const lista = porEsquema.get(p.idEsquema) ?? [];
+    lista.push(p.nome);
+    porEsquema.set(p.idEsquema, lista);
+  }
+  return esquemas.map((e) => ({ ...e, pontosNomes: porEsquema.get(e.id) ?? [] }));
+}
+
+const mockEsquemas: Esquema[] = withPontosNomes(esquemaSchema.array().parse(esquemasData));
 
 const delay = () => new Promise((r) => setTimeout(r, config.mockDelayMs));
 
@@ -159,22 +171,37 @@ function linhaKey(e: Esquema): string {
 }
 
 /** Agrupa os esquemas por COD_LINHA (ou pelo nome exato, quando não há código). */
+type LinhaAcc = Omit<Linha, "totalEsquemas" | "horarios" | "locais"> & {
+  horarios: Set<string>;
+  locais: Set<string>;
+};
+
 function buildLinhas(esquemas: Esquema[]): Linha[] {
-  const map = new Map<string, Omit<Linha, "totalEsquemas">>();
+  const map = new Map<string, LinhaAcc>();
   for (const e of esquemas) {
     const key = linhaKey(e);
     const found = map.get(key);
-    if (found) found.esquemaIds.push(e.id);
-    else
+    if (found) {
+      found.esquemaIds.push(e.id);
+      found.horarios.add(e.horario);
+      e.pontosNomes.forEach((nome) => found.locais.add(nome));
+    } else
       map.set(key, {
         key,
         nomeLinha: e.nomeLinha,
         codLinha: e.codLinha?.trim() || null,
         esquemaIds: [e.id],
+        horarios: new Set([e.horario]),
+        locais: new Set(e.pontosNomes),
       });
   }
   return [...map.values()]
-    .map((l) => ({ ...l, totalEsquemas: l.esquemaIds.length }))
+    .map((l) => ({
+      ...l,
+      totalEsquemas: l.esquemaIds.length,
+      horarios: [...l.horarios].sort(),
+      locais: [...l.locais],
+    }))
     .sort((a, b) => a.nomeLinha.localeCompare(b.nomeLinha, "pt-BR"));
 }
 

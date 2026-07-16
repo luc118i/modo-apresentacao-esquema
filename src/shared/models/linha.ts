@@ -9,4 +9,8 @@ export type Linha = {
   codLinha: string | null;
   esquemaIds: number[];
   totalEsquemas: number;
+  /** Horários (partida) distintos entre os esquemas do grupo — usado na busca. */
+  horarios: string[];
+  /** Nomes de pontos do roteiro, únicos entre os esquemas do grupo — busca por local. */
+  locais: string[];
 };

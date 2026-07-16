@@ -38,7 +38,7 @@ export function LinhaSearch({
 
         <div className="mt-4">
           <SearchInput
-            placeholder="Buscar linha — ex.: Fortaleza, Recife…"
+            placeholder="Buscar por cidade, código ou horário — ex.: Apodi, 18:45…"
             value={query}
             onChange={(e) => onQuery(e.target.value)}
             autoFocus
