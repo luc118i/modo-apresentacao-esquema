@@ -48,6 +48,7 @@ export function LinhaSearchPage() {
       linhas={linhasFiltradas}
       isLoading={linhas.isLoading}
       isError={linhas.isError}
+      onRetry={() => linhas.refetch()}
       onSelect={(key) => navigate(`/linha/${encodeURIComponent(key)}`)}
       lastUpdated={lastUpdated.data ?? null}
     />

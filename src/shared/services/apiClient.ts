@@ -7,5 +7,8 @@ import { config } from "@/config";
  */
 export const apiClient = axios.create({
   baseURL: config.apiUrl,
-  timeout: 15_000,
+  // Apps Script "esfria" depois de um tempo sem uso — a primeira chamada
+  // depois de um tempo parado pode demorar bem mais que uma chamada normal.
+  // 30s + retry (ver queryClient.ts) evita mostrar erro por causa disso.
+  timeout: 30_000,
 });

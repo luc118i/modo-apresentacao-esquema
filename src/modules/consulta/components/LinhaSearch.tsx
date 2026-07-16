@@ -1,9 +1,10 @@
-import { SearchX } from "lucide-react";
+import { RefreshCw, SearchX } from "lucide-react";
 import type { Linha } from "@/shared/models/linha";
 import { SearchInput } from "@/shared/ui/SearchInput";
 import { SkeletonList } from "@/shared/ui/Skeleton";
 import { EmptyState } from "@/shared/ui/EmptyState";
 import { AppFooter } from "@/shared/ui/AppFooter";
+import { Button } from "@/shared/ui/Button";
 import { LinhaCard } from "./LinhaCard";
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
   linhas: Linha[];
   isLoading: boolean;
   isError: boolean;
+  onRetry: () => void;
   onSelect: (key: string) => void;
   lastUpdated: string | null;
 };
@@ -22,6 +24,7 @@ export function LinhaSearch({
   linhas,
   isLoading,
   isError,
+  onRetry,
   onSelect,
   lastUpdated,
 }: Props) {
@@ -51,8 +54,13 @@ export function LinhaSearch({
         <EmptyState
           icon={SearchX}
           title="Não foi possível carregar as linhas"
-          description="Tente novamente em instantes."
-        />
+          description="Pode ser só a planilha demorando pra responder — tente de novo."
+        >
+          <Button variant="outline" onClick={onRetry} className="mt-2">
+            <RefreshCw className="size-4" />
+            Tentar novamente
+          </Button>
+        </EmptyState>
       ) : linhas.length === 0 ? (
         <EmptyState
           icon={SearchX}

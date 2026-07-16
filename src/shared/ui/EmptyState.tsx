@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import type { ReactNode } from "react";
 import { cn } from "@/shared/lib/cn";
 
 type Props = {
@@ -6,9 +7,10 @@ type Props = {
   title: string;
   description?: string;
   className?: string;
+  children?: ReactNode;
 };
 
-export function EmptyState({ icon: Icon, title, description, className }: Props) {
+export function EmptyState({ icon: Icon, title, description, className, children }: Props) {
   return (
     <div
       className={cn(
@@ -19,6 +21,7 @@ export function EmptyState({ icon: Icon, title, description, className }: Props)
       {Icon && <Icon className="size-7 text-text-subtle" aria-hidden />}
       <p className="font-medium text-text">{title}</p>
       {description && <p className="max-w-sm text-sm text-text-muted">{description}</p>}
+      {children}
     </div>
   );
 }
