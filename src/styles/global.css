@@ -42,10 +42,52 @@
   --font-sans: "Archivo", system-ui, -apple-system, sans-serif;
 }
 
+/* ---------------------------------------------------------------
+   Tema escuro — mesma identidade (laranja Catedral), fundo grafite
+   quente em vez de preto puro. Ativado via [data-theme="dark"] no
+   <html> (ver useTheme.ts); sem media query — é escolha do usuário.
+   --------------------------------------------------------------- */
+[data-theme="dark"] {
+  --color-page: #161311;
+  --color-card: #1e1a17;
+  --color-surface: #211d1a;
+  --color-border: #332c26;
+  --color-rail: #3a322b;
+
+  --color-ink: #f3ede6;
+  --color-muted: #a89b8d;
+  --color-subtle: #6f6459;
+
+  --color-primary: #ff7a2e;
+  --color-primary-light: #ffa156;
+  --color-node-border: #7a4a26;
+  --color-node-ink: #ffb37a;
+  --color-accent-soft: #3a2416;
+
+  --color-embarque: #ff7a2e;
+  --color-alimentacao: #e0ae2f;
+  --color-troca: #5b8def;
+  --color-abastece: #3ec670;
+
+  --color-bg: #161311;
+  --color-surface-hover: #29231f;
+  --color-text: #f3ede6;
+  --color-text-muted: #a89b8d;
+  --color-text-subtle: #6f6459;
+  --color-primary-hover: #ff8f4d;
+  --color-primary-soft: #3a2416;
+  --color-ida: #5b8def;
+  --color-volta: #a685f5;
+}
+
 html,
 body,
 #root {
   min-height: 100%;
+}
+
+body {
+  transition: background-color 0.15s ease;
 }
 
 body {

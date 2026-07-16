@@ -1,11 +1,10 @@
-import { ChevronRight, MapPin, SearchX } from "lucide-react";
+import { SearchX } from "lucide-react";
 import type { Linha } from "@/shared/models/linha";
-import { CardButton } from "@/shared/ui/Card";
-import { Badge } from "@/shared/ui/Badge";
 import { SearchInput } from "@/shared/ui/SearchInput";
 import { SkeletonList } from "@/shared/ui/Skeleton";
 import { EmptyState } from "@/shared/ui/EmptyState";
 import { AppFooter } from "@/shared/ui/AppFooter";
+import { LinhaCard } from "./LinhaCard";
 
 type Props = {
   query: string;
@@ -61,24 +60,10 @@ export function LinhaSearch({
           description="Ajuste os termos da busca."
         />
       ) : (
-        <ul className="flex flex-col gap-2.5">
+        <ul className="flex flex-col gap-3">
           {linhas.map((linha) => (
             <li key={linha.key}>
-              <CardButton onClick={() => onSelect(linha.key)}>
-                <MapPin className="size-4.5 shrink-0 text-text-subtle" />
-                <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                  <span className="truncate font-medium">{linha.nomeLinha}</span>
-                  {linha.codLinha && (
-                    <span className="truncate font-mono text-xs text-text-subtle">
-                      {linha.codLinha}
-                    </span>
-                  )}
-                </span>
-                <Badge>
-                  {linha.totalEsquemas} {linha.totalEsquemas === 1 ? "esquema" : "esquemas"}
-                </Badge>
-                <ChevronRight className="size-4.5 shrink-0 text-text-subtle transition-transform group-hover:translate-x-0.5" />
-              </CardButton>
+              <LinhaCard linha={linha} onSelect={onSelect} />
             </li>
           ))}
         </ul>

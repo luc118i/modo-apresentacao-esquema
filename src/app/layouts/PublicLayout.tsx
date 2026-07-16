@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, Route } from "lucide-react";
 import { useHeaderState } from "@/app/HeaderSlot";
 import { GlobalLoadingBar } from "@/shared/ui/GlobalLoadingBar";
+import { ThemeToggle } from "@/shared/ui/ThemeToggle";
 import { UpdateBanner } from "@/modules/consulta/components/UpdateBanner";
 import { useEdgeGestures } from "@/shared/hooks/useEdgeGestures";
 import { cn } from "@/shared/lib/cn";
@@ -58,6 +59,9 @@ export function PublicLayout({ children }: { children: ReactNode }) {
               </span>
             </>
           )}
+
+          {!title && <span className="flex-1" />}
+          <ThemeToggle />
         </div>
       </header>
       <UpdateBanner />
