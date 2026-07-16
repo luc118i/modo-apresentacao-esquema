@@ -49,7 +49,7 @@ export function LinhaSearch({
       </div>
 
       {isLoading ? (
-        <SkeletonList />
+        <SkeletonList rowClassName="h-[180px] w-full" message="Buscando as linhas certinhas pra você…" />
       ) : isError ? (
         <EmptyState
           icon={SearchX}
