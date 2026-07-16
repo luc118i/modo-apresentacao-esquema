@@ -19,9 +19,97 @@
     <meta name="twitter:title" content="Roteiros Catedral" />
     <meta name="twitter:description" content="Consulte o roteiro operacional de viagens da Viação Catedral." />
     <meta name="twitter:image" content="https://esquemas-consulta.vercel.app/catedral-bus.jpg" />
+
+    <!--
+      Tela de carregamento estática — puro HTML/CSS inline, sem depender do
+      bundle JS (~160KB gzip) nem do CSS externo baixarem primeiro. Em 3G
+      isso pode levar vários segundos; sem isso a tela fica branca até lá.
+
+      Fica FORA de #root (irmã, por cima com z-index) — se estivesse dentro,
+      o createRoot().render() a apagaria instantaneamente ao montar, sem dar
+      tempo da transição de saída rodar. main.tsx chama dismissBootLoading()
+      depois do primeiro paint real do app, que abre as duas metades pros
+      lados (como o splash do X) revelando o app por baixo, e só então
+      remove o elemento do DOM.
+    -->
+    <style>
+      #boot-loading {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        pointer-events: none;
+      }
+      #boot-loading .boot-half {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 50%;
+        background: #ece6e0;
+        transition: transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);
+      }
+      #boot-loading .boot-left { left: 0; }
+      #boot-loading .boot-right { right: 0; }
+      #boot-loading .boot-content {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        color: #1a1410;
+        font-family: system-ui, -apple-system, sans-serif;
+        transition:
+          opacity 0.3s ease,
+          transform 0.3s ease;
+      }
+      #boot-loading .logo {
+        display: grid;
+        place-items: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: #f55807;
+        color: #fff;
+        animation: boot-pulse 1.4s ease-in-out infinite;
+      }
+      #boot-loading p {
+        margin: 0;
+        font-size: 14px;
+        color: #9a8e82;
+      }
+      @keyframes boot-pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.7; transform: scale(0.94); }
+      }
+      /* Abertura: metades deslizam pros lados, conteúdo encolhe e some rápido. */
+      #boot-loading.boot-loading--opening .boot-left { transform: translateX(-100%); }
+      #boot-loading.boot-loading--opening .boot-right { transform: translateX(100%); }
+      #boot-loading.boot-loading--opening .boot-content { opacity: 0; transform: scale(0.85); }
+
+      @media (prefers-color-scheme: dark) {
+        #boot-loading .boot-half { background: #161311; }
+        #boot-loading .boot-content { color: #f3ede6; }
+        #boot-loading p { color: #a89b8d; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #boot-loading .boot-half,
+        #boot-loading .boot-content { transition: none; }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    <div id="boot-loading">
+      <div class="boot-half boot-left"></div>
+      <div class="boot-half boot-right"></div>
+      <div class="boot-content">
+        <div class="logo">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M4 17h16V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v11Z"/><path d="M4 11h16"/></svg>
+        </div>
+        <p>Carregando roteiros…</p>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
