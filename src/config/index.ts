@@ -13,5 +13,5 @@ export const config = {
     url: "https://github.com/luc118i",
   },
   /** Número que recebe as solicitações de ajuste via WhatsApp (formato internacional, só dígitos). */
-  whatsappAjuste: "556199089050",
+  whatsappAjuste: "556198477593",
 } as const;
