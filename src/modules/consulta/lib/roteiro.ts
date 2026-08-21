@@ -2,13 +2,14 @@ import { normalizeText } from "@/shared/lib/normalize";
 import type { Esquema } from "@/shared/models/esquema";
 import { TIPO_PONTO, type Ponto } from "@/shared/models/ponto";
 
-export type TagKey = "embarque" | "alimentacao" | "troca" | "abastece";
+export type TagKey = "embarque" | "alimentacao" | "troca" | "abastece" | "limpeza";
 
 export const TAGS: Record<TagKey, { label: string; c: string; bg: string; dot: string }> = {
   embarque: { label: "Embarque / Desemb.", c: "#C2410C", bg: "#FFF1E8", dot: "#F55807" },
   alimentacao: { label: "Alimentação", c: "#92610A", bg: "#FBF1DC", dot: "#CA8A04" },
   troca: { label: "Troca de motorista", c: "#1E4ED8", bg: "#EAF0FF", dot: "#2563EB" },
   abastece: { label: "Abastecimento", c: "#157A3A", bg: "#E8F6EC", dot: "#16A34A" },
+  limpeza: { label: "Limpeza", c: "#7E22CE", bg: "#F3E8FF", dot: "#9333EA" },
 };
 
 export const LEGEND = [
@@ -16,6 +17,7 @@ export const LEGEND = [
   { label: "Alimentação", dot: "#CA8A04" },
   { label: "Troca de motorista", dot: "#2563EB" },
   { label: "Abastecimento", dot: "#16A34A" },
+  { label: "Limpeza", dot: "#9333EA" },
 ];
 
 /**
@@ -23,7 +25,7 @@ export const LEGEND = [
  * somados ao tempo base (aba TEMPO_PERMANENCIA) só quando há horário comercial —
  * mesma regra do Gestão de Esquemas (EsqScripts.html: TIPO_PARADA_BONUS_MIN).
  */
-const TAG_BONUS_MIN: Partial<Record<TagKey, number>> = { alimentacao: 30, troca: 15, abastece: 15 };
+const TAG_BONUS_MIN: Partial<Record<TagKey, number>> = { alimentacao: 30, troca: 15, abastece: 15, limpeza: 30 };
 
 const UFS = new Set([
   "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB",
@@ -86,6 +88,7 @@ function parseTagToken(raw: string): TagKey | null {
   if (/ALIMENTA|REFEICAO|COMIDA|LANCHE/.test(t)) return "alimentacao";
   if (/TROCA|MOTORISTA|RENDICAO/.test(t)) return "troca";
   if (/ABASTEC|COMBUSTIVEL|POSTO/.test(t)) return "abastece";
+  if (/LIMPEZA/.test(t)) return "limpeza";
   return null;
 }
 
