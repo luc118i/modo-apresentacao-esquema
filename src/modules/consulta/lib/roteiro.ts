@@ -165,6 +165,9 @@ export function buildRoteiro(esquema: Esquema, pontos: Ponto[]): RoteiroViewMode
     // ou só o bônus (sem comercial), com 30 de piso quando não há bônus nenhum.
     const bonus = tags.reduce((sum, t) => sum + (TAG_BONUS_MIN[t] ?? 0), 0);
     const temComercial = !!p.horarioComercial;
+    // "Embarque / Desembarque" só faz sentido com horário de sessão — sem ele,
+    // não há embarque/desembarque de passageiros marcado pra esse ponto.
+    const tagsVisiveis = temComercial ? tags : tags.filter((t) => t !== "embarque");
     const permMin =
       p.tempoLocal != null
         ? p.tempoLocal
@@ -180,7 +183,7 @@ export function buildRoteiro(esquema: Esquema, pontos: Ponto[]): RoteiroViewMode
       cidade: uf ? `${city} - ${uf}` : city,
       place: tipoLocal === "Ponto de apoio" ? place : "",
       tipoLocal,
-      tags,
+      tags: tagsVisiveis,
       horaComercial: p.horarioComercial ?? "",
       minLabel: permMin != null ? `${String(permMin).padStart(2, "0")} min` : "",
       origin: i === 0,
