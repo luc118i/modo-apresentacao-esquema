@@ -267,4 +267,20 @@ export const EsquemaService = {
   async getServerLastUpdated(): Promise<string | null> {
     return fetchServerLastUpdated();
   },
+
+  /**
+   * Apaga o cache persistente (localStorage) de esquemas e pontos. Chamado
+   * pelo botão "Atualizar" do aviso de dados novos — um reload sozinho NÃO
+   * limpa o localStorage, então sem isso a tela recarrega mas continua lendo
+   * o snapshot antigo (a revalidação em segundo plano é best-effort e pode
+   * falhar silenciosamente, ex.: cold start do Apps Script).
+   */
+  clearLocalCache(): void {
+    try {
+      localStorage.removeItem(LS_KEY);
+      localStorage.removeItem(LS_KEY_PONTOS);
+    } catch {
+      // localStorage indisponível — nada a limpar.
+    }
+  },
 };
