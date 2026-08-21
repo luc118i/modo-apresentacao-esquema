@@ -33,7 +33,7 @@ export function useLastUpdated() {
   return useQuery({ queryKey: ["lastUpdated"], queryFn: () => EsquemaService.getLastUpdated() });
 }
 
-const POLL_INTERVAL_MS = 3 * 60 * 1000;
+const POLL_INTERVAL_MS = 20 * 1000;
 
 /** Checagem periódica (sempre fresca) usada só pelo aviso de "dados novos". */
 export function useServerLastUpdated() {
